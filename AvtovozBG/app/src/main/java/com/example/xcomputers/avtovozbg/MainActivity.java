@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
     private SignInButton signInButton;
+    private static String json;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         welcomeTV = (TextView) findViewById(R.id.welcomeTV);
 
-
+        json = "{\"contacts\":{\"name\":\"Иван Иванов\",\"phone\":\"0888984515\"},\"posts\":[{\"brand\":\"Opel\",\"model\":\"Astra\",\"hp\":90,\"year\":2000,\"km\":143000,\"color\":\"silver\",\"description\":\"В добро състояние, с 4 зимни гуми\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/0/04/Opel_Astra_G_front_20081128.jpg\",\"http://images.forum-auto.com/mesimages/417472/astra%20(3).jpg\",\"https://upload.wikimedia.org/wikipedia/commons/5/59/Vauxhall.astra.bristol.750pix.jpg\",\"http://www.tuning.bg/public/upload/gallery/extended/normal/Opel_Astra_G_24asti_1.png\",\"https://www.namcars.net/image/2006-Opel-Astra-1.9-GTC-25627-8698828_2.jpg\",\"http://www.picautos.com/images/opel-astra-gtc-2.0-turbo-cosmo-04.jpg\",\"http://www.motorstown.com/images/opel-astra-2.2-dti-06.jpg\"]},{\"brand\":\"Ford\",\"model\":\"Fiesta\",\"hp\":60,\"year\":1996,\"km\":135000,\"color\":\"black\",\"description\":\"Удряна 4 пъти, не може да завива, най-добре за части\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/9/9d/Ford_Fiesta_MK3_rear_20070926.jpg\",\"http://www.powerful-cars.com/images/ford-d/1989-fiesta-4door-hatchback-11.jpg\",\"http://s1.cdn.autoevolution.com/images/gallery/FORDFiesta3Doors-2776_4.jpg\",\"http://www.fordfan.de/fordcars/carpic/75/image/1996fiesta.jpg\",\"http://images.forum-auto.com/mesimages/229428/Rouge.jpg\"]}]}";
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.e("displayName", displayName);
             Log.e("eMail", eMail);
             Log.e("tag",result.getStatus().getStatusCode() + "");
-            changeScreen();
+            changeScreen(displayName, eMail, json);
             finish();
         }
 
@@ -111,10 +112,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             String eMail = result.getSignInAccount().getEmail();
             Log.e("displayName", displayName);
             Log.e("eMail", eMail);
-            Intent intent = new Intent(MainActivity.this, CarsActivity.class);
-            startActivity(intent);
+            String value = null;
+            if (getIntent().getExtras() != null) {
+                for (String key : getIntent().getExtras().keySet()) {
+                    value = getIntent().getExtras().getString(key);
+                    Log.d("TAG", "Key: " + key + " Value: " + value);
+                }
+                value = getIntent().getExtras().getString("json");
+            }
+            changeScreen(displayName, eMail, json);
             finish();
-            hideProgressDialog();
+
         } else {
 
         }
@@ -180,10 +188,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Log.e("TAG", "onConnected called");
         //changeScreen(true);
     }
-    public void changeScreen(){
+    public void changeScreen(String displayName, String eMail, String json){
         Intent intent = new Intent(MainActivity.this, CarsActivity.class);
+        intent.putExtra("displayName", displayName);
+        intent.putExtra("eMail", eMail);
+        intent.putExtra("json", json);
         startActivity(intent);
         hideProgressDialog();
+        finish();
     }
 
     @Override

@@ -45,7 +45,7 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
 
             Car car = cars.get(position);
             holder.brandAndModel.setText(car.getBrand()+ " " + car.getModel());
-            holder.firstImage.setImageResource(R.mipmap.ic_launcher);
+            holder.firstImage.setImageBitmap(car.getImages().get(0));
             holder.price.setText(car.getPrice() +  "");
             holder.kilometers.setText(car.getKilometers()+ "KM");
             holder.yearOfManufacture.setText(car.getYearOfManufacture()+ "");

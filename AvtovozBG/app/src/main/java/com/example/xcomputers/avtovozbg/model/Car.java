@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by svetlio on 12.10.2016 г..
@@ -18,7 +20,7 @@ public class Car implements Serializable{
     private String color;
     private String description;
     private int price;
-    public static ArrayList<Bitmap> images;
+    private ArrayList<Bitmap> images;
 
     public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images) {
         this.model = model;
@@ -64,4 +66,8 @@ public class Car implements Serializable{
     public int getPrice() {
         return price;
     }
+
+   public ArrayList<Bitmap> getImages(){
+       return images;
+   }
 }
