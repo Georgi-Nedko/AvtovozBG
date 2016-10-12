@@ -124,7 +124,7 @@ public class CarsActivity extends AppCompatActivity {
                     JSONArray urls = post.getJSONArray("urls");
                     String address = urls.getString(0);
                     tepmoraryBitmapList = downloadBitmap(address);
-                    carList.add(new Car(model,brand,hp, 5000, productionYear,color, km, description, tepmoraryBitmapList, urls));
+                    carList.add(new Car(model,brand,hp, 5000, productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -163,7 +163,7 @@ public class CarsActivity extends AppCompatActivity {
                 InputStream inputStream = urlConnection.getInputStream();
                 if (inputStream != null) {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap resizedBitmap = getResizedBitmap(bitmap, 100, 100);
+                    Bitmap resizedBitmap = getResizedBitmap(bitmap, 200, 200);
                     Log.e("IMAGESBITMAP", bitmap + "");
                     map.add(resizedBitmap);
                 }

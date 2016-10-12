@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.e("TAG", token);
+        //Log.e("TAG", token);
 
         welcomeTV = (TextView) findViewById(R.id.welcomeTV);
 
@@ -100,13 +100,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-            String displayName = result.getSignInAccount().getDisplayName();
-            String eMail = result.getSignInAccount().getEmail();
-            Log.e("displayName", displayName);
-            Log.e("eMail", eMail);
-            Log.e("tag",result.getStatus().getStatusCode() + "");
-            changeScreen(displayName, eMail, json);
-            finish();
+
         }
 
     }
@@ -134,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             finish();
 
         } else {
-
+            hideProgressDialog();
         }
     }
 

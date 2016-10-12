@@ -23,8 +23,9 @@ public class Car implements Serializable{
     private String description;
     private int price;
     private ArrayList<Bitmap> images;
-    private JSONArray imageUrls;
-    public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images, JSONArray imageUrls) {
+    private String imageUrls;
+
+    public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images, String imageUrls) {
         this.model = model;
         this.brand = brand;
         this.price = price;
@@ -73,7 +74,7 @@ public class Car implements Serializable{
        return images;
     }
 
-    public JSONArray getImageUrls() {
+    public String getImageUrls() {
         return this.imageUrls;
     }
 }
