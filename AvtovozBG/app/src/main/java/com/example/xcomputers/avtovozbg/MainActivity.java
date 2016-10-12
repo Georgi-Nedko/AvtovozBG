@@ -2,17 +2,15 @@ package com.example.xcomputers.avtovozbg;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.e("TAG", token);
+      //  Log.e("TAG", token);
 
         welcomeTV = (TextView) findViewById(R.id.welcomeTV);
 
