@@ -22,6 +22,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <!--
@@ -62,7 +63,8 @@
 
         <activity android:name=".CarsActivity" >
 
-         </activity>
+
+        </activity>
         <activity android:name=".SelectedCarInfoActivity"></activity>
 
     </application>

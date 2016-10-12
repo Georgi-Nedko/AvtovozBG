@@ -48,14 +48,10 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
 
             Car car = cars.get(position);
             holder.brandAndModel.setText(car.getBrand()+ " " + car.getModel());
-
-
             holder.firstImage.setImageBitmap(car.getImages().get(0));
-            holder.price.setText(car.getPrice() +  "");
-            holder.kilometers.setText(car.getKilometers()+ "KM");
-            holder.yearOfManufacture.setText(car.getYearOfManufacture()+ "");
-            holder.color.setText(car.getColor());
-            holder.horsePower.setText(car.getHorsePower() + "HP");
+            holder.price.setText("Price: " + car.getPrice()+ "$");
+            holder.yearOfManufacture.setText("Produced in: " + car.getYearOfManufacture());
+            holder.horsePower.setText(car.getHorsePower() + "HP , " + car.getKilometers()+ "KM , " + car.getColor());
 
         }
 
@@ -79,10 +75,8 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
             public MyRecyclerViewHolder(View itemView) {
                 super(itemView);
                 brandAndModel = (TextView) itemView.findViewById(R.id.model_and_brand);
-                horsePower = (TextView) itemView.findViewById(R.id.horse_power);
+                horsePower = (TextView) itemView.findViewById(R.id.horse_power_KM_color);
                 yearOfManufacture = (TextView) itemView.findViewById(R.id.year_of_manufacture);
-                kilometers = (TextView) itemView.findViewById(R.id.kilometers);
-                color = (TextView) itemView.findViewById(R.id.color);
                 price = (TextView) itemView.findViewById(R.id.price);
                 firstImage = (ImageView) itemView.findViewById(R.id.first_img);
                 firstImage.setScaleType(ImageView.ScaleType.FIT_XY);

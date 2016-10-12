@@ -28,38 +28,16 @@
                 android:text="Tabantche"
                 android:id="@+id/model_and_brand"
                 android:layout_weight="1"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/horse_power"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/horse_power_KM_color"
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:text="101HP"
                     android:layout_weight="1"/>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:id="@+id/kilometers"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:text="222222km"
-                    android:layout_weight="2"/>
-                <TextView
-                    android:layout_width="0dp"
-                    android:id="@+id/color"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:text="MYCOLOR"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"/>
-
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
