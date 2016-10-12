@@ -36,7 +36,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         hsv = (HorizontalScrollView) findViewById(R.id.scrollView);
         call = (ImageButton) findViewById(R.id.call_us);
 
-        selectedCar = (Car) getIntent().getSerializableExtra("selectedCar");
+        selectedCar = (Car) getIntent().getParcelableExtra("selectedCar");
         modelAndBrand.setText(selectedCar.getModel() + "," + selectedCar.getBrand());
         horsePower.setText(selectedCar.getHorsePower() + "HP");
         kilometers.setText(selectedCar.getKilometers() + "");
