@@ -1,7 +1,9 @@
 package com.example.xcomputers.avtovozbg;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.xcomputers.avtovozbg.model.Car;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -45,6 +48,8 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
 
             Car car = cars.get(position);
             holder.brandAndModel.setText(car.getBrand()+ " " + car.getModel());
+
+
             holder.firstImage.setImageBitmap(car.getImages().get(0));
             holder.price.setText(car.getPrice() +  "");
             holder.kilometers.setText(car.getKilometers()+ "KM");

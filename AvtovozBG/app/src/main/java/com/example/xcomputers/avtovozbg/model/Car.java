@@ -2,6 +2,8 @@ package com.example.xcomputers.avtovozbg.model;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,8 +23,8 @@ public class Car implements Serializable{
     private String description;
     private int price;
     private ArrayList<Bitmap> images;
-
-    public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images) {
+    private JSONArray imageUrls;
+    public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images, JSONArray imageUrls) {
         this.model = model;
         this.brand = brand;
         this.price = price;
@@ -32,7 +34,7 @@ public class Car implements Serializable{
         this.kilometers = kilometers;
         this.description = description;
         this.images = images;
-
+        this.imageUrls = imageUrls;
     }
 
     public String getModel() {
@@ -67,7 +69,11 @@ public class Car implements Serializable{
         return price;
     }
 
-   public ArrayList<Bitmap> getImages(){
+    public ArrayList<Bitmap> getImages(){
        return images;
-   }
+    }
+
+    public JSONArray getImageUrls() {
+        return this.imageUrls;
+    }
 }

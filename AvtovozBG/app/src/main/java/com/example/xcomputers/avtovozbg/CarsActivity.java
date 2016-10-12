@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -121,8 +122,9 @@ public class CarsActivity extends AppCompatActivity {
                     color = post.getString("color");
                     description = post.getString("description");
                     JSONArray urls = post.getJSONArray("urls");
-                    tepmoraryBitmapList = downloadBitmap(urls);
-                    carList.add(new Car(model,brand,hp, 5000, productionYear,color, km, description, tepmoraryBitmapList));
+                    String address = urls.getString(0);
+                    tepmoraryBitmapList = downloadBitmap(address);
+                    carList.add(new Car(model,brand,hp, 5000, productionYear,color, km, description, tepmoraryBitmapList, urls));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -145,13 +147,11 @@ public class CarsActivity extends AppCompatActivity {
 
         }
     }
-    private ArrayList<Bitmap> downloadBitmap(JSONArray urls) {
+    private ArrayList<Bitmap> downloadBitmap(String address) {
         HttpURLConnection urlConnection = null;
         ArrayList<Bitmap> map = new ArrayList<>();
-        for(int i = 0; i < urls.length(); i++) {
+        //for(int i = 0; i < urls.length(); i++) {
             try {
-            String address = urls.getString(i);
-
                 URL url = new URL(address);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 int statusCode = urlConnection.getResponseCode();
@@ -163,8 +163,9 @@ public class CarsActivity extends AppCompatActivity {
                 InputStream inputStream = urlConnection.getInputStream();
                 if (inputStream != null) {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Bitmap resizedBitmap = getResizedBitmap(bitmap, 100, 100);
                     Log.e("IMAGESBITMAP", bitmap + "");
-                    map.add(bitmap);
+                    map.add(resizedBitmap);
                 }
             } catch (Exception e) {
                 urlConnection.disconnect();
@@ -176,7 +177,23 @@ public class CarsActivity extends AppCompatActivity {
                 }
 
             }
-        }
+        //}
         return map;
+    }
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 }
