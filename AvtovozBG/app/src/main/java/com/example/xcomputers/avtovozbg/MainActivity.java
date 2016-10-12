@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             finish();
 
         } else {
+            changeScreen(null,null, json);
             hideProgressDialog();
 
         }

@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 
 import com.example.xcomputers.avtovozbg.model.Car;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
@@ -41,6 +40,7 @@ public class CarsActivity extends AppCompatActivity {
     private String color;
     private String description;
     private ProgressDialog mProgressDialog;
+    private String phoneNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +50,14 @@ public class CarsActivity extends AppCompatActivity {
 
 
         String json = getIntent().getStringExtra("json");
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject contacts = jsonObject.getJSONObject("contacts");
+            phoneNumber = contacts.getString("phone");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         new ImageDownloader().execute(json);
         showProgressDialog();
         /*carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
@@ -81,6 +89,8 @@ public class CarsActivity extends AppCompatActivity {
                 Car selectedCar = carList.get(position);
                 Intent intent = new Intent(CarsActivity.this,SelectedCarInfoActivity.class);
                 intent.putExtra("selectedCar",selectedCar);
+                intent.putExtra("phoneNumber",phoneNumber);
+
                 startActivity(intent);
 
             }
