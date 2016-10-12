@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "190828001690",
+    "firebase_url": "https://avtovozbg-99f8b.firebaseio.com",
+    "project_id": "avtovozbg-99f8b",
+    "storage_bucket": "avtovozbg-99f8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190828001690:android:42e4a82a3661db0d",
+        "android_client_info": {
+          "package_name": "com.example.xcomputers.avtovozbg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190828001690-ri9ifjv9hllh7c73mohmenfshtiil2qm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.xcomputers.avtovozbg",
+            "certificate_hash": "7C80A9DA769DCB956B1A495028ACF63B1E78D355"
+          }
+        },
+        {
+          "client_id": "190828001690-rjro3eja30bp3f6i7eu5aa1fmad1bva6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ1T4Dq1BvhfkEXgNP5Y8_STyYxjX88ws"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190828001690-rjro3eja30bp3f6i7eu5aa1fmad1bva6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
