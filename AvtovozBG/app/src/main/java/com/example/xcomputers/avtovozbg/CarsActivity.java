@@ -21,10 +21,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class CarsActivity extends AppCompatActivity {
@@ -41,6 +46,9 @@ public class CarsActivity extends AppCompatActivity {
     private String description;
     private ProgressDialog mProgressDialog;
     private String phoneNumber;
+    private static String displayName;
+    private static String eMail;
+    private String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +56,21 @@ public class CarsActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.cars_recycler);
         carList = new ArrayList<>();
 
-
-        String json = getIntent().getStringExtra("json");
+        displayName = getIntent().getStringExtra("displayName");
+        eMail = getIntent().getStringExtra("eMail");
+        token = getIntent().getStringExtra("token");
+        JSONObject regJson = new JSONObject();
+        try {
+            regJson.put("device", token);
+            regJson.put("email", eMail);
+            regJson.put("name", displayName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e("TAG", regJson.toString());
+        new RegisterDeviceToken().execute("");
+        new RequestAllNewInfo().execute("http://31.13.253.92/getPostsNotification.php");
+        /*String json = getIntent().getStringExtra("json");
         try {
             JSONObject jsonObject = new JSONObject(json);
             JSONObject contacts = jsonObject.getJSONObject("contacts");
@@ -57,9 +78,9 @@ public class CarsActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        new ImageDownloader().execute(json);
-        showProgressDialog();
+        }*/
+       /* new ImageDownloader().execute(json);
+        showProgressDialog();*/
         /*carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
         carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
         carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
@@ -79,6 +100,10 @@ public class CarsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).color(Color.WHITE).build());
         adapter.setOnResultClickListener(createClickListener());
+
+    }
+    public static void registerToken(String token) {
+
 
     }
 
@@ -113,7 +138,91 @@ public class CarsActivity extends AppCompatActivity {
             mProgressDialog.hide();
         }
     }
+    class RegisterDeviceToken extends AsyncTask<String, Void, String>{
 
+        @Override
+        protected String doInBackground(String... params) {
+            JSONObject regJson = new JSONObject();
+            try {
+                regJson.put("device", token);
+                regJson.put("email", eMail);
+                regJson.put("name", displayName);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            try {
+                String address = "http://31.13.253.92/registerDevice.php";
+                URL url = new URL(address);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.connect();
+                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+                wr.write(regJson.toString());
+                wr.flush();
+
+                StringBuilder sb = new StringBuilder();
+                int HttpResult = connection.getResponseCode();
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream(), "utf-8"));
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    br.close();
+                    System.out.println("" + sb.toString());
+                } else {
+                    System.out.println(connection.getResponseMessage());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+    }
+
+
+    class RequestAllNewInfo extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            String address = params[0];
+            StringBuilder response = new StringBuilder();
+            try {
+                URL url = new URL(address);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                int status = connection.getResponseCode();
+                Log.e("TAG", status + "");
+                Scanner sc = new Scanner(connection.getInputStream());
+                while (sc.hasNextLine()) {
+                    response.append(sc.nextLine());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.e("TAG", "responce: " + response.toString());
+            return response.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String jsonResponce) {
+            Log.e("TAG", jsonResponce);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponce);
+                JSONObject contacts = jsonObject.getJSONObject("contacts");
+                phoneNumber = contacts.getString("phone");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            new ImageDownloader().execute(jsonResponce);
+            showProgressDialog();
+        }
+    }
 
     class ImageDownloader extends AsyncTask<String, Void, ArrayList<Bitmap>>{
 

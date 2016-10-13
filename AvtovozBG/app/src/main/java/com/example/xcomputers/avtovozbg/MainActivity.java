@@ -22,14 +22,34 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
 
     private static final int RC_SIGN_IN = 9001;
+
     private TextView welcomeTV;
     protected GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
     private SignInButton signInButton;
     private static String json;
+    private static String displayName;
+    private static String eMail;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setContentView(R.layout.activity_main);
 
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
-        String token = FirebaseInstanceId.getInstance().getToken();
+        token = FirebaseInstanceId.getInstance().getToken();
+        //Log.e("TAG", token);
 
 
         welcomeTV = (TextView) findViewById(R.id.welcomeTV);
@@ -82,6 +103,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+   /* public static void registerToken(String token) {
+
+        JSONObject regJson = new JSONObject();
+        try {
+            regJson.put("device", token);
+            regJson.put("email", eMail);
+            regJson.put("name", displayName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            String address = null;
+            URL url = new URL(address);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            wr.write(regJson.toString());
+            wr.flush();
+
+            StringBuilder sb = new StringBuilder();
+            int HttpResult = connection.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream(), "utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+                System.out.println("" + sb.toString());
+            } else {
+                System.out.println(connection.getResponseMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
+
+
+
+
+
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -109,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Log.e("TAG", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
-            String displayName = result.getSignInAccount().getDisplayName();
-            String eMail = result.getSignInAccount().getEmail();
+            displayName = result.getSignInAccount().getDisplayName();
+            eMail = result.getSignInAccount().getEmail();
             Log.e("displayName", displayName);
             Log.e("eMail", eMail);
             String value = null;
@@ -126,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             finish();
 
         } else {
-            changeScreen(null,null, json);
+           /* changeScreen(null,null, json);*/
             hideProgressDialog();
 
         }
@@ -197,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         intent.putExtra("displayName", displayName);
         intent.putExtra("eMail", eMail);
         intent.putExtra("json", json);
+        intent.putExtra("token", token);
         startActivity(intent);
         hideProgressDialog();
         finish();
