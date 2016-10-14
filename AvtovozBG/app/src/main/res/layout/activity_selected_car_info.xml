@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/place_autocomplete_prediction_primary_text"
+    android:background="#e9e9e9"
     android:weightSum="6"
     tools:context="com.example.xcomputers.avtovozbg.SelectedCarInfoActivity">
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -23,9 +24,11 @@
         </LinearLayout>
 
     </HorizontalScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#cecece"
         android:layout_marginLeft="5dp"
         android:orientation="vertical"
         android:layout_weight="4">
@@ -41,7 +44,7 @@
                 android:gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:text="Audi A4,18,TFSI Ambiente"
-                android:textColor="@android:color/white"
+                android:textColor="@android:color/black"
                 android:layout_weight="0.9">
 
             </TextView>

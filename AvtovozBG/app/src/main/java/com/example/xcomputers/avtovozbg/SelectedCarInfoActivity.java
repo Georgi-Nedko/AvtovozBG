@@ -38,8 +38,8 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
     private HorizontalScrollView hsv;
     private ImageButton call;
     private LinearLayout hsvLL;
-    int height;
-    int width;
+    private int height;
+    private int width;
 
 
     @Override
@@ -79,7 +79,8 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
 //            JSONObject obj = new JSONObject(urls);
             JSONArray jsonArray = new JSONArray(urls);
             for(int i = 0; i<jsonArray.length();i++){
-                String address = jsonArray.getString(i);
+                String temp = "http://192.168.6.144:8012/";
+                String address = temp + jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
             }
 
