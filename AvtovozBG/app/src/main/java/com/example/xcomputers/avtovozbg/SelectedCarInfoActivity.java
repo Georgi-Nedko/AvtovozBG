@@ -60,12 +60,21 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         call = (ImageButton) findViewById(R.id.call_us);
         hsvLL = (LinearLayout) findViewById(R.id.scrollViewLL);
 
+        hsvLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SelectedCarInfoActivity.this,SeePhotosOnFullScreenActivity.class);
+                intent.putExtra("car",selectedCar.getImageUrls());
+                startActivity(intent);
+                }
+        });
+
         selectedCar = getIntent().getParcelableExtra("selectedCar");
         modelAndBrand.setText(selectedCar.getModel() + "," + selectedCar.getBrand());
         horsePower.setText("Horse power: " + selectedCar.getHorsePower() + "HP");
         kilometers.setText("Kilometers: " +selectedCar.getKilometers() + "");
         producedIn.setText("Produced in: " + selectedCar.getYearOfManufacture() + "");
-        price.setText("Price -> " + selectedCar.getPrice() + "$");
+        price.setText("Price -> " + selectedCar.getPrice() + "BGN");
         color.setText("Color: " + selectedCar.getColor());
         description.setText(selectedCar.getDescription());
 
