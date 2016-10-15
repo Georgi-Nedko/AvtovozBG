@@ -49,6 +49,7 @@ public class CarsActivity extends AppCompatActivity {
     private static String displayName;
     private static String eMail;
     private String token;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,32 +69,8 @@ public class CarsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.e("TAG", regJson.toString());
-        new RegisterDeviceToken().execute("");
-        new RequestAllNewInfo().execute("http://31.13.253.92/getPostsNotification.php");
-        /*String json = getIntent().getStringExtra("json");
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            JSONObject contacts = jsonObject.getJSONObject("contacts");
-            phoneNumber = contacts.getString("phone");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-       /* new ImageDownloader().execute(json);
-        showProgressDialog();*/
-        /*carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
-        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));*/
-
+        new TokenRegistrationTask().execute("");
+        new NewCarsRequestTask().execute("http://31.13.253.92/getPostsNotification.php?device="+ token);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarsRecyclerViewAdapter(CarsActivity.this, carList);
@@ -102,19 +79,15 @@ public class CarsActivity extends AppCompatActivity {
         adapter.setOnResultClickListener(createClickListener());
 
     }
-    public static void registerToken(String token) {
-
-
-    }
 
     protected CarsRecyclerViewAdapter.onResultClickListener createClickListener() {
         return new CarsRecyclerViewAdapter.onResultClickListener() {
             @Override
             public void onResultClicked(View view, int position) {
                 Car selectedCar = carList.get(position);
-                Intent intent = new Intent(CarsActivity.this,SelectedCarInfoActivity.class);
-                intent.putExtra("selectedCar",selectedCar);
-                intent.putExtra("phoneNumber",phoneNumber);
+                Intent intent = new Intent(CarsActivity.this, SelectedCarInfoActivity.class);
+                intent.putExtra("selectedCar", selectedCar);
+                intent.putExtra("phoneNumber", phoneNumber);
 
                 startActivity(intent);
 
@@ -138,7 +111,8 @@ public class CarsActivity extends AppCompatActivity {
             mProgressDialog.hide();
         }
     }
-    class RegisterDeviceToken extends AsyncTask<String, Void, String>{
+
+    class TokenRegistrationTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -183,8 +157,7 @@ public class CarsActivity extends AppCompatActivity {
 
     }
 
-
-    class RequestAllNewInfo extends AsyncTask<String, Void, String>{
+    class NewCarsRequestTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... params) {
@@ -220,11 +193,11 @@ public class CarsActivity extends AppCompatActivity {
             }
 
             new ImageDownloader().execute(jsonResponce);
-            showProgressDialog();
+            //showProgressDialog();
         }
     }
 
-    class ImageDownloader extends AsyncTask<String, Void, ArrayList<Bitmap>>{
+    class ImageDownloader extends AsyncTask<String, Void, ArrayList<Bitmap>> {
 
         @Override
         protected ArrayList<Bitmap> doInBackground(String... params) {
@@ -243,7 +216,7 @@ public class CarsActivity extends AppCompatActivity {
                     JSONArray urls = post.getJSONArray("urls");
                     String address = urls.getString(0);
                     tepmoraryBitmapList = downloadBitmap(address);
-                    carList.add(new Car(model,brand,hp, 5000, productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
+                    carList.add(new Car(model, brand, hp, 5000, productionYear, color, km, description));//, tepmoraryBitmapList, urls.toString()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -266,39 +239,39 @@ public class CarsActivity extends AppCompatActivity {
 
         }
     }
+
     private ArrayList<Bitmap> downloadBitmap(String address) {
         HttpURLConnection urlConnection = null;
         ArrayList<Bitmap> map = new ArrayList<>();
-        //for(int i = 0; i < urls.length(); i++) {
-            try {
-                URL url = new URL(address);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                int statusCode = urlConnection.getResponseCode();
-                Log.e("IMAGESTATUS", statusCode + "");
-                if (statusCode != 200) {
-                    Log.e("IMAGESTATUS!=200", statusCode + "");
-                    return null;
-                }
-                InputStream inputStream = urlConnection.getInputStream();
-                if (inputStream != null) {
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Bitmap resizedBitmap = getResizedBitmap(bitmap, 200, 200);
-                    Log.e("IMAGESBITMAP", bitmap + "");
-                    map.add(resizedBitmap);
-                }
-            } catch (Exception e) {
-                urlConnection.disconnect();
-                //Log.w("IMAGESDownloader", "Error downloading image from " + url);
-            } finally {
-                Log.e("IMAGESFINALY", urlConnection + "");
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-
+        try {
+            URL url = new URL(address);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            int statusCode = urlConnection.getResponseCode();
+            Log.e("IMAGESTATUS", statusCode + "");
+            if (statusCode != 200) {
+                Log.e("IMAGESTATUS!=200", statusCode + "");
+                return null;
             }
-        //}
+            InputStream inputStream = urlConnection.getInputStream();
+            if (inputStream != null) {
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                Bitmap resizedBitmap = getResizedBitmap(bitmap, 200, 200);
+                Log.e("IMAGESBITMAP", bitmap + "");
+                map.add(resizedBitmap);
+            }
+        } catch (Exception e) {
+            //urlConnection.disconnect();
+            //Log.w("IMAGESDownloader", "Error downloading image from " + url);
+        } finally {
+            Log.e("IMAGESFINALY", urlConnection + "");
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+
+        }
         return map;
     }
+
     public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();
         int height = bm.getHeight();

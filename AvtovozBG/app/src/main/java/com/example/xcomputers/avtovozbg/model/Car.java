@@ -25,11 +25,11 @@ public class Car implements Parcelable {
     private String color;
     private String description;
     private int price;
-    private ArrayList<Bitmap> images;
-    private String imageUrls;
+    //private ArrayList<Bitmap> images;
+    //private String imageUrls;
 
 
-    public Car(String model, String brand, int horsePower,int price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images, String imageUrls) {
+    public Car(String model, String brand, int horsePower, int price, int yearOfManufacture, String color, int kilometers, String description){//, ArrayList<Bitmap> images, String imageUrls) {
         this.model = model;
         this.brand = brand;
         this.price = price;
@@ -38,8 +38,8 @@ public class Car implements Parcelable {
         this.color = color;
         this.kilometers = kilometers;
         this.description = description;
-        this.images = images;
-        this.imageUrls = imageUrls;
+        //this.images = images;
+        //this.imageUrls = imageUrls;
     }
 
     protected Car(Parcel in) {
@@ -51,8 +51,8 @@ public class Car implements Parcelable {
         color = in.readString();
         description = in.readString();
         price = in.readInt();
-        images = in.createTypedArrayList(Bitmap.CREATOR);
-        imageUrls = in.readString();
+        //images = in.createTypedArrayList(Bitmap.CREATOR);
+        //imageUrls = in.readString();
     }
 
     public static final Creator<Car> CREATOR = new Creator<Car>() {
@@ -99,13 +99,13 @@ public class Car implements Parcelable {
         return price;
     }
 
-    public ArrayList<Bitmap> getImages(){
-       return images;
-    }
+    //public ArrayList<Bitmap> getImages() {
+      //  return images;
+   // }
 
-    public String getImageUrls() {
-        return this.imageUrls;
-    }
+    //public String getImageUrls() {
+       // return this.imageUrls;
+   // }
 
     @Override
     public int describeContents() {
@@ -122,7 +122,7 @@ public class Car implements Parcelable {
         dest.writeString(color);
         dest.writeString(description);
         dest.writeInt(price);
-        dest.writeTypedList(images);
-        dest.writeString(imageUrls);
+        //dest.writeTypedList(images);
+       // dest.writeString(imageUrls);
     }
 }

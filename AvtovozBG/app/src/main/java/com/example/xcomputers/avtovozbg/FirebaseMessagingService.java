@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by xComputers on 10.10.2016 г..
  */
 
-public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
+public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {

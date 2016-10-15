@@ -38,7 +38,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -88,13 +88,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     .build();
         }
 
-
-
         signInButton = (SignInButton) findViewById(R.id.google_login_button);
         signInButton.setSize(SignInButton.SIZE_WIDE);
-
-
-
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,55 +98,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
-   /* public static void registerToken(String token) {
-
-        JSONObject regJson = new JSONObject();
-        try {
-            regJson.put("device", token);
-            regJson.put("email", eMail);
-            regJson.put("name", displayName);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            String address = null;
-            URL url = new URL(address);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.connect();
-            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-            wr.write(regJson.toString());
-            wr.flush();
-
-            StringBuilder sb = new StringBuilder();
-            int HttpResult = connection.getResponseCode();
-            if (HttpResult == HttpURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(connection.getInputStream(), "utf-8"));
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                br.close();
-                System.out.println("" + sb.toString());
-            } else {
-                System.out.println(connection.getResponseMessage());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
-
-
-
-
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -168,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-
     private void handleSignInResult(GoogleSignInResult result) {
 
         Log.e("TAG", "handleSignInResult:" + result.isSuccess());
@@ -178,15 +127,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             eMail = result.getSignInAccount().getEmail();
             Log.e("displayName", displayName);
             Log.e("eMail", eMail);
-            String value = null;
-            if (getIntent().getExtras() != null) {
-                for (String key : getIntent().getExtras().keySet()) {
-                    value = getIntent().getExtras().getString(key);
-                    Log.d("TAG", "Key: " + key + " Value: " + value);
-                }
-                value = getIntent().getExtras().getString("json");
-            }
-            changeScreen(displayName, eMail, json);
+            changeScreen(displayName, eMail);
             hideProgressDialog();
             finish();
 
@@ -196,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
     }
-
 
     @Override
     public void onStart() {
@@ -251,17 +191,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.e("TAG", "onConnected called");
-        //changeScreen(true);
+
     }
-    public void changeScreen(String displayName, String eMail, String json){
+
+    public void changeScreen(String displayName, String eMail) {
         Intent intent = new Intent(MainActivity.this, CarsActivity.class);
         intent.putExtra("displayName", displayName);
         intent.putExtra("eMail", eMail);
-        intent.putExtra("json", json);
         intent.putExtra("token", token);
         startActivity(intent);
         hideProgressDialog();

@@ -72,25 +72,25 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
-        String urls = selectedCar.getImageUrls();
+        //String urls = selectedCar.getImageUrls();
 
 
-        try {
+        /*try {
 //            JSONObject obj = new JSONObject(urls);
             JSONArray jsonArray = new JSONArray(urls);
-            for(int i = 0; i<jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 String address = jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
-            }
+            }*/
 
 
-            Log.e("URLSARRAY",jsonArray.toString());
+        /*    Log.e("URLSARRAY", jsonArray.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
+*/
 
-
-        Log.e("URLS",selectedCar.getImageUrls());
+       // Log.e("URLS", selectedCar.getImageUrls());
 
 
         //TODO  da napylnq scrollviewto sys snimkite
@@ -139,28 +139,27 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
             if (isCancelled()) {
                 bitmap = null;
             }
-                        if (bitmap != null) {
-                            selectedCar.getImages().add(bitmap);
-                            ImageView newImageView = new ImageView(SelectedCarInfoActivity.this);
-                            newImageView.setImageBitmap(bitmap);
-                            hsvLL.addView(newImageView);
+            if (bitmap != null) {
+               //selectedCar.getImages().add(bitmap);
+                ImageView newImageView = new ImageView(SelectedCarInfoActivity.this);
+                newImageView.setImageBitmap(bitmap);
+                hsvLL.addView(newImageView);
 
-                            newImageView.requestLayout();
-                            newImageView.getLayoutParams().height = height/3;
-                            newImageView.getLayoutParams().width = width;
-                            newImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                newImageView.requestLayout();
+                newImageView.getLayoutParams().height = height / 3;
+                newImageView.getLayoutParams().width = width;
+                newImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                            Log.e("IMAGESADD",bitmap.toString());
-                            Log.e("IMAGES1",selectedCar.getImages().size()+ "");
-                    } else {
-            // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
+                Log.e("IMAGESADD", bitmap.toString());
+                //Log.e("IMAGES1", selectedCar.getImages().size() + "");
+            } else {
+                // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
 
-                    }
-              }
+            }
+        }
 
 
     }
-
 
 
     private Bitmap downloadBitmap(String url) {
@@ -169,22 +168,22 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
             URL uri = new URL(url);
             urlConnection = (HttpURLConnection) uri.openConnection();
             int statusCode = urlConnection.getResponseCode();
-            Log.e("IMAGESTATUS",statusCode +  "");
+            Log.e("IMAGESTATUS", statusCode + "");
             if (statusCode != 200) {
-                Log.e("IMAGESTATUS!=200",statusCode +  "");
+                Log.e("IMAGESTATUS!=200", statusCode + "");
                 return null;
             }
             InputStream inputStream = urlConnection.getInputStream();
             if (inputStream != null) {
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                Log.e("IMAGESBITMAP",bitmap +  "");
+                Log.e("IMAGESBITMAP", bitmap + "");
                 return bitmap;
             }
         } catch (Exception e) {
             urlConnection.disconnect();
             Log.w("IMAGESDownloader", "Error downloading image from " + url);
         } finally {
-            Log.e("IMAGESFINALY",urlConnection +  "");
+            Log.e("IMAGESFINALY", urlConnection + "");
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
