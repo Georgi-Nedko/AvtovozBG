@@ -1,34 +1,23 @@
 package com.example.xcomputers.avtovozbg;
 
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
-//
-//import android.os.Bundle;
-//import android.support.v7.app.AppCompatActivity;
-//
-//import com.daimajia.androidanimations.library.Techniques;
-//
-//import br.com.jeancsanchez.photoviewslider.PhotosViewSlider;
-//
-//
+import com.example.xcomputers.avtovozbg.model.Car;
+
+import java.util.ArrayList;
+
+
 public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
-//
-//    private  PhotosViewSlider photoViewSlider;
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_see_photos_on_full_screen);
-//        photoViewSlider = (PhotosViewSlider) findViewById(R.id.photosViewSlider);
-//
-//        String urls = getIntent().getStringExtra("car");
-//        String[] splitUrls = urls.split(",");
-//        for(int i = 0 ; i < splitUrls.length;i++){
-//            photoViewSlider.setPhotoUrl(splitUrls[i]);
-//        }
-//
-//        photoViewSlider.initializePhotos();
-//        photoViewSlider.setTechniqueAnimation(Techniques.BounceIn);
-//
-//
-//    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_see_photos_on_full_screen);
+        Bitmap map = getIntent().getParcelableExtra("carImage");
+        Log.e("TAG", map.toString());
+
+    }
 }

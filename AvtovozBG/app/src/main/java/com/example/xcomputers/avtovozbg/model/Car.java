@@ -34,8 +34,8 @@ public class Car implements Parcelable {
         this.color = color;
         this.kilometers = kilometers;
         this.description = description;
-        //this.images = images;
-        //this.imageUrls = imageUrls;
+        this.images = images;
+        this.imageUrls = imageUrls;
     }
 
     protected Car(Parcel in) {

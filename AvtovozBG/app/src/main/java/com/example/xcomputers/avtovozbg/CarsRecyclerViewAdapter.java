@@ -48,7 +48,7 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
 
         Car car = cars.get(position);
         holder.brandAndModel.setText(car.getBrand() + " " + car.getModel());
-        //holder.firstImage.setImageBitmap(car.getImages().get(0));
+        holder.firstImage.setImageBitmap(car.getImages().get(0));
         holder.price.setText("Price: " + car.getPrice() + "$");
         holder.yearOfManufacture.setText("Produced in: " + car.getYearOfManufacture());
         holder.horsePower.setText(car.getHorsePower() + "HP , " + car.getKilometers() + "KM , " + car.getColor());
@@ -69,7 +69,7 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
         TextView kilometers;
         TextView color;
         TextView price;
-        //ImageView firstImage;
+        ImageView firstImage;
 
 
         public MyRecyclerViewHolder(View itemView) {
@@ -78,8 +78,8 @@ public class CarsRecyclerViewAdapter extends RecyclerView.Adapter<CarsRecyclerVi
             horsePower = (TextView) itemView.findViewById(R.id.horse_power_KM_color);
             yearOfManufacture = (TextView) itemView.findViewById(R.id.year_of_manufacture);
             price = (TextView) itemView.findViewById(R.id.price);
-            //firstImage = (ImageView) itemView.findViewById(R.id.first_img);
-            //firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
+            firstImage = (ImageView) itemView.findViewById(R.id.first_img);
+            firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
             itemView.setOnClickListener(this);
         }
 

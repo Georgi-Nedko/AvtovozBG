@@ -21,6 +21,7 @@ import com.example.xcomputers.avtovozbg.model.Car;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -65,6 +66,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
                 intent.putExtra("car", selectedCar.getImageUrls());
+                intent.putExtra("carImage", selectedCar.getImages().get(0));
                 startActivity(intent);
             }
         });
@@ -83,50 +85,45 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
-        //String urls = selectedCar.getImageUrls();
+        String urls = selectedCar.getImageUrls();
 
-        firstImage = new ImageView(SelectedCarInfoActivity.this);
+       /* firstImage = new ImageView(SelectedCarInfoActivity.this);
         firstImage.setImageResource(R.drawable.login_background);
         hsvLL.addView(firstImage);
         firstImage.requestLayout();
         firstImage.getLayoutParams().height = height / 3;
         firstImage.getLayoutParams().width = width;
         firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
+*/
 
-
-        /*try {
-//            JSONObject obj = new JSONObject(urls);
+        try {
             JSONArray jsonArray = new JSONArray(urls);
-<<<<<<< HEAD
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String address = jsonArray.getString(i);
-=======
+
             for(int i = 0; i<jsonArray.length();i++){
                // String temp = "http://192.168.6.144:8012/";
                 //temp +
                 String address =  jsonArray.getString(i);
->>>>>>> ef4d34e1dda10c573fb07672301f6ce73200ce64
+
                 new ImageDownloaderTask().execute(address);
-            }*/
+            }
 
-
-        /*    Log.e("URLSARRAY", jsonArray.toString());
+            Log.e("URLSARRAY", jsonArray.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-*/
 
 
-        Log.e("URLS", selectedCar.getImageUrls());
+
+       // Log.e("URLS", selectedCar.getImageUrls());
 
 
         //TODO  da napylnq scrollviewto sys snimkite
 
 
-//        ImageView img = new ImageView(SelectedCarInfoActivity.this);
-//        img.setImageResource(R.drawable.login_background);
-//        img.setScaleType(ImageView.ScaleType.FIT_XY);
-//        hsv.addView(img);
+        /*ImageView img = new ImageView(SelectedCarInfoActivity.this);
+        img.setImageResource(R.drawable.login_background);
+        img.setScaleType(ImageView.ScaleType.FIT_XY);
+        hsv.addView(img);*/
         //TODO clicklistener na call butona
         call.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,13 +150,13 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-//            if(selectedCar.getImages().size() == 0){
-//                ImageView img = new ImageView(SelectedCarInfoActivity.this);
-//                img.setImageBitmap(selectedCar.getImages().get(0));
-//                img.setScaleType(ImageView.ScaleType.FIT_XY);
-//                hsvLL.addView(img);
-//            }
-//
+            if(selectedCar.getImages().size() == 0){
+                ImageView img = new ImageView(SelectedCarInfoActivity.this);
+                img.setImageBitmap(selectedCar.getImages().get(0));
+                img.setScaleType(ImageView.ScaleType.FIT_XY);
+                hsvLL.addView(img);
+            }
+
         }
 
         @Override
@@ -168,7 +165,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 bitmap = null;
             }
             if (bitmap != null) {
-                //selectedCar.getImages().add(bitmap);
+                selectedCar.getImages().add(bitmap);
                 ImageView newImageView = new ImageView(SelectedCarInfoActivity.this);
                 newImageView.setImageBitmap(bitmap);
                 hsvLL.addView(newImageView);

@@ -72,7 +72,7 @@ public class CarsActivity extends AppCompatActivity {
 
         //new RegisterDeviceToken().execute("");
        // new RequestAllNewInfo().execute("http://192.168.6.144:8012/getPostsNotification.php?device=" + token);
-        /*String json = getIntent().getStringExtra("json");
+        String json = getIntent().getStringExtra("json");
         try {
             JSONObject jsonObject = new JSONObject(json);
             JSONObject contacts = jsonObject.getJSONObject("contacts");
@@ -80,9 +80,9 @@ public class CarsActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }*/
-       /* new ImageDownloader().execute(json);
-        showProgressDialog();*/
+        }
+        new ImageDownloader().execute(json);
+        showProgressDialog();
         /*carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
         carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
         carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
@@ -244,14 +244,14 @@ public class CarsActivity extends AppCompatActivity {
                     km = post.getInt("km");
                     color = post.getString("color");
                     description = post.getString("description");
-                    price = post.getString("price");
+                    //price = post.getString("price");
                     JSONArray urls = post.getJSONArray("urls");
 
                     //String temp = "http://192.168.6.144:8012/";
                     //temp+ urls
                     String address =  urls.getString(0);
                     tepmoraryBitmapList = downloadBitmap(address);
-                    carList.add(new Car(model,brand,hp, price, productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
+                    carList.add(new Car(model,brand,hp, "6000", productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

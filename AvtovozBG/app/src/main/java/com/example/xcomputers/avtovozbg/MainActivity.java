@@ -189,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         intent.putExtra("displayName", displayName);
         intent.putExtra("eMail", eMail);
         intent.putExtra("token", token);
+        intent.putExtra("json", json);
         startActivity(intent);
         hideProgressDialog();
         finish();
