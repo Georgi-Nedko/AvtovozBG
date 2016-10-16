@@ -1,16 +1,25 @@
 package com.example.xcomputers.avtovozbg;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -41,9 +50,9 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
     private LinearLayout hsvLL;
     private int height;
     private int width;
-    int counter = 0;
-    ImageView firstImage;
-
+    private int counter = 0;
+    private ImageView firstImage;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +73,24 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         hsvLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
-                intent.putExtra("car", selectedCar.getImageUrls());
-                intent.putExtra("carImage", selectedCar.getImages().get(0));
-                startActivity(intent);
+                if(isConnectingToInternet()) {
+                    Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
+                    intent.putExtra("car", selectedCar.getImageUrls());
+                    intent.putExtra("carImage", selectedCar.getImages().get(0));
+                    startActivity(intent);
+                }
+                else{
+                    promptUserToTurnOnWifi();
+                }
             }
         });
         selectedCar = getIntent().getParcelableExtra("selectedCar");
-        modelAndBrand.setText(selectedCar.getModel() + "," + selectedCar.getBrand());
-        horsePower.setText("Horse power: " + selectedCar.getHorsePower() + "HP");
-        kilometers.setText("Kilometers: " + selectedCar.getKilometers() + "");
-        producedIn.setText("Produced in: " + selectedCar.getYearOfManufacture() + "");
-        price.setText("Price -> " + selectedCar.getPrice() + "BGN");
-        color.setText("Color: " + selectedCar.getColor());
+        modelAndBrand.setText(selectedCar.getBrand() + "  " + selectedCar.getModel());
+        horsePower.setText(selectedCar.getHorsePower()+"");
+        kilometers.setText(selectedCar.getKilometers()+"");
+        producedIn.setText(selectedCar.getYearOfManufacture()+"");
+        price.setText(selectedCar.getPrice());
+        color.setText(selectedCar.getColor());
         description.setText(selectedCar.getDescription());
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -222,5 +236,49 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+    private void promptUserToTurnOnWifi() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (!isConnectingToInternet()) {
+            builder.setTitle("Internet Services Not Active");
+            builder.setMessage("Please enable Internet Services");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Show location settings when the user acknowledges the alert dialog
+                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        }
+    }
+
+    private boolean isConnectingToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) SelectedCarInfoActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Network[] networks = connectivityManager.getAllNetworks();
+            NetworkInfo networkInfo;
+            for (Network mNetwork : networks) {
+                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
+                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
+                    return true;
+                }
+            }
+        } else {
+            if (connectivityManager != null) {
+                //noinspection deprecation
+                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
+                if (info != null) {
+                    for (NetworkInfo anInfo : info) {
+                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

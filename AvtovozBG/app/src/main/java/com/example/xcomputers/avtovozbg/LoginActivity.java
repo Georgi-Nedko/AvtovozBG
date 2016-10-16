@@ -1,10 +1,19 @@
 package com.example.xcomputers.avtovozbg;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,20 +25,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
 
 
     private static final int RC_SIGN_IN = 9001;
 
-    private TextView welcomeTV;
+    private TextView appNameTV;
     protected GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
     private SignInButton signInButton;
@@ -37,18 +44,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static String displayName;
     private static String eMail;
     private String token;
-
+    private AlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
         token = FirebaseInstanceId.getInstance().getToken();
         //Log.e("TAG", token);
 
+        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Capture_it.ttf");
+        appNameTV = (TextView) findViewById(R.id.appNameTV);
+        appNameTV.setTypeface(custom_font);
 
-        welcomeTV = (TextView) findViewById(R.id.welcomeTV);
 
         json = "{\"contacts\":{\"name\":\"Красимир Стоев\",\"phone\":\"0888552211\"},\"" +
                 "posts\":[" +
@@ -80,12 +89,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signIn();
+                if(isConnectingToInternet())
+                    signIn();
+                else
+                    promptUserToTurnOnWifi();
             }
         });
     }
 
     private void signIn() {
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -127,9 +140,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onStart() {
-
+        promptUserToTurnOnWifi();
         mGoogleApiClient.connect();
-        showProgressDialog();
+       /* showProgressDialog();
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
@@ -151,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             });
 
-        }
+        }*/
         super.onStart();
     }
 
@@ -185,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     public void changeScreen(String displayName, String eMail) {
-        Intent intent = new Intent(MainActivity.this, CarsActivity.class);
+        Intent intent = new Intent(LoginActivity.this, CarsActivity.class);
         intent.putExtra("displayName", displayName);
         intent.putExtra("eMail", eMail);
         intent.putExtra("token", token);
@@ -198,4 +211,50 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public void onConnectionSuspended(int i) {
 
     }
+
+    private void promptUserToTurnOnWifi() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (!isConnectingToInternet()) {
+            builder.setTitle("Internet Services Not Active");
+            builder.setMessage("Please enable Internet Services");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Show location settings when the user acknowledges the alert dialog
+                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        }
+    }
+
+    private boolean isConnectingToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Network[] networks = connectivityManager.getAllNetworks();
+            NetworkInfo networkInfo;
+            for (Network mNetwork : networks) {
+                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
+                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
+                    return true;
+                }
+            }
+        } else {
+            if (connectivityManager != null) {
+                //noinspection deprecation
+                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
+                if (info != null) {
+                    for (NetworkInfo anInfo : info) {
+                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }

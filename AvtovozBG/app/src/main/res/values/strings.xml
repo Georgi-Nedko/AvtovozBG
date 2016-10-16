@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">AvtovozBG</string>
     <string name="title_activity_maps">Map</string>
+    <string name="avtovozbg">Avtovoz BG</string>
+    <string name="horse_power">Horse power</string>
+    <string name="odometer">Odometer</string>
+    <string name="produced_in">Produced in</string>
+    <string name="color">Color</string>
+    <string name="price">Price</string>
+    <string name="description">Description</string>
 </resources>

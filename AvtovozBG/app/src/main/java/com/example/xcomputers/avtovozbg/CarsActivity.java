@@ -1,13 +1,21 @@
 package com.example.xcomputers.avtovozbg;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +58,7 @@ public class CarsActivity extends AppCompatActivity {
     private static String eMail;
     private String token;
     private String price;
+    private AlertDialog alertDialog;
 
 
     @Override
@@ -74,22 +83,12 @@ public class CarsActivity extends AppCompatActivity {
 
         new TokenRegistrationTask().execute("http://avtovoz.hopto.org/registerDevice.php?device=" +  token);
         new NewCarsRequestTask().execute("http://avtovoz.hopto.org/getPostsNotification.php?device=" + token);
-       /* String json = getIntent().getStringExtra("json");
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            JSONObject contacts = jsonObject.getJSONObject("contacts");
-            phoneNumber = contacts.getString("phone");
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-        //new ImageDownloader().execute(json);
-        //showProgressDialog();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarsRecyclerViewAdapter(CarsActivity.this, carList);
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).size(6).color(Color.BLACK).build());
+        //recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).size(6).color(Color.BLACK).build());
         adapter.setOnResultClickListener(createClickListener());
 
     }
@@ -98,11 +97,16 @@ public class CarsActivity extends AppCompatActivity {
         return new CarsRecyclerViewAdapter.onResultClickListener() {
             @Override
             public void onResultClicked(View view, int position) {
-                Car selectedCar = carList.get(position);
-                Intent intent = new Intent(CarsActivity.this, SelectedCarInfoActivity.class);
-                intent.putExtra("selectedCar", selectedCar);
-                intent.putExtra("phoneNumber", phoneNumber);
-                startActivity(intent);
+                if(isConnectingToInternet()) {
+                    Car selectedCar = carList.get(position);
+                    Intent intent = new Intent(CarsActivity.this, SelectedCarInfoActivity.class);
+                    intent.putExtra("selectedCar", selectedCar);
+                    intent.putExtra("phoneNumber", phoneNumber);
+                    startActivity(intent);
+                }
+                else{
+                    promptUserToTurnOnWifi();
+                }
             }
         };
     }
@@ -278,8 +282,7 @@ public class CarsActivity extends AppCompatActivity {
                 map.add(resizedBitmap);
             }
         } catch (Exception e) {
-            //urlConnection.disconnect();
-            //Log.w("IMAGESDownloader", "Error downloading image from " + url);
+
         } finally {
             Log.e("IMAGESFINALY", urlConnection + "");
             if (urlConnection != null) {
@@ -305,5 +308,50 @@ public class CarsActivity extends AppCompatActivity {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    private void promptUserToTurnOnWifi() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (!isConnectingToInternet()) {
+            builder.setTitle("Internet Services Not Active");
+            builder.setMessage("Please enable Internet Services");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Show location settings when the user acknowledges the alert dialog
+                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        }
+    }
+
+    private boolean isConnectingToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) CarsActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Network[] networks = connectivityManager.getAllNetworks();
+            NetworkInfo networkInfo;
+            for (Network mNetwork : networks) {
+                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
+                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
+                    return true;
+                }
+            }
+        } else {
+            if (connectivityManager != null) {
+                //noinspection deprecation
+                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
+                if (info != null) {
+                    for (NetworkInfo anInfo : info) {
+                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
