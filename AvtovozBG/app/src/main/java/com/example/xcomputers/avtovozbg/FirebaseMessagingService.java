@@ -20,7 +20,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
 
-        String json = remoteMessage.getData().get("json");
+        String json = remoteMessage.getData().get("message");
         Log.e("TAG", json);
         for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
             String key = entry.getKey();

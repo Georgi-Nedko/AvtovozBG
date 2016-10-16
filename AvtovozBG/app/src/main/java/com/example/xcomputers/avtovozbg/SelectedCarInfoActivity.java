@@ -38,8 +38,10 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
     private HorizontalScrollView hsv;
     private ImageButton call;
     private LinearLayout hsvLL;
-    int height;
-    int width;
+    private int height;
+    private int width;
+    int counter = 0;
+    private ImageView firstImage;
 
 
     @Override
@@ -58,13 +60,22 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         call = (ImageButton) findViewById(R.id.call_us);
         hsvLL = (LinearLayout) findViewById(R.id.scrollViewLL);
 
+        hsvLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
+                intent.putExtra("car", selectedCar.getImageUrls());
+                startActivity(intent);
+            }
+        });
+
         selectedCar = getIntent().getParcelableExtra("selectedCar");
         modelAndBrand.setText(selectedCar.getModel() + "," + selectedCar.getBrand());
-        horsePower.setText(selectedCar.getHorsePower() + "HP");
-        kilometers.setText(selectedCar.getKilometers() + "");
-        producedIn.setText(selectedCar.getYearOfManufacture() + "");
-        price.setText(" costs -> " + selectedCar.getPrice() + "$");
-        color.setText(selectedCar.getColor());
+        horsePower.setText("Horse power: " + selectedCar.getHorsePower() + "HP");
+        kilometers.setText("Kilometers: " + selectedCar.getKilometers() + "");
+        producedIn.setText("Produced in: " + selectedCar.getYearOfManufacture() + "");
+        price.setText("Price -> " + selectedCar.getPrice() + "BGN");
+        color.setText("Color: " + selectedCar.getColor());
         description.setText(selectedCar.getDescription());
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -74,12 +85,27 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
 
         //String urls = selectedCar.getImageUrls();
 
+        firstImage = new ImageView(SelectedCarInfoActivity.this);
+        firstImage.setImageResource(R.drawable.login_background);
+        hsvLL.addView(firstImage);
+        firstImage.requestLayout();
+        firstImage.getLayoutParams().height = height / 3;
+        firstImage.getLayoutParams().width = width;
+        firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
+
 
         /*try {
 //            JSONObject obj = new JSONObject(urls);
             JSONArray jsonArray = new JSONArray(urls);
+<<<<<<< HEAD
             for (int i = 0; i < jsonArray.length(); i++) {
                 String address = jsonArray.getString(i);
+=======
+            for(int i = 0; i<jsonArray.length();i++){
+               // String temp = "http://192.168.6.144:8012/";
+                //temp +
+                String address =  jsonArray.getString(i);
+>>>>>>> ef4d34e1dda10c573fb07672301f6ce73200ce64
                 new ImageDownloaderTask().execute(address);
             }*/
 
@@ -90,7 +116,8 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         }
 */
 
-       // Log.e("URLS", selectedCar.getImageUrls());
+
+        Log.e("URLS", selectedCar.getImageUrls());
 
 
         //TODO  da napylnq scrollviewto sys snimkite
@@ -120,6 +147,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         @Override
         protected Bitmap doInBackground(String... params) {
             Log.e("IMAGESSVALQMSNIMKA", params[0]);
+            counter++;
             return downloadBitmap(params[0]);
         }
 
@@ -140,7 +168,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 bitmap = null;
             }
             if (bitmap != null) {
-               //selectedCar.getImages().add(bitmap);
+                //selectedCar.getImages().add(bitmap);
                 ImageView newImageView = new ImageView(SelectedCarInfoActivity.this);
                 newImageView.setImageBitmap(bitmap);
                 hsvLL.addView(newImageView);
@@ -155,40 +183,50 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
             } else {
                 // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
 
+
+                Log.e("IMAGESADD", bitmap.toString());
+                Log.e("IMAGES1", selectedCar.getImages().size() + "");
+                if (counter == 1) {
+                    hsvLL.removeViewAt(0);
+
+                } else {
+                    // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
+
+                }
             }
+
+
         }
 
 
-    }
-
-
-    private Bitmap downloadBitmap(String url) {
-        HttpURLConnection urlConnection = null;
-        try {
-            URL uri = new URL(url);
-            urlConnection = (HttpURLConnection) uri.openConnection();
-            int statusCode = urlConnection.getResponseCode();
-            Log.e("IMAGESTATUS", statusCode + "");
-            if (statusCode != 200) {
-                Log.e("IMAGESTATUS!=200", statusCode + "");
-                return null;
-            }
-            InputStream inputStream = urlConnection.getInputStream();
-            if (inputStream != null) {
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                Log.e("IMAGESBITMAP", bitmap + "");
-                return bitmap;
-            }
-        } catch (Exception e) {
-            urlConnection.disconnect();
-            Log.w("IMAGESDownloader", "Error downloading image from " + url);
-        } finally {
-            Log.e("IMAGESFINALY", urlConnection + "");
-            if (urlConnection != null) {
+        private Bitmap downloadBitmap(String url) {
+            HttpURLConnection urlConnection = null;
+            try {
+                URL uri = new URL(url);
+                urlConnection = (HttpURLConnection) uri.openConnection();
+                int statusCode = urlConnection.getResponseCode();
+                Log.e("IMAGESTATUS", statusCode + "");
+                if (statusCode != 200) {
+                    Log.e("IMAGESTATUS!=200", statusCode + "");
+                    return null;
+                }
+                InputStream inputStream = urlConnection.getInputStream();
+                if (inputStream != null) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    Log.e("IMAGESBITMAP", bitmap + "");
+                    return bitmap;
+                }
+            } catch (Exception e) {
                 urlConnection.disconnect();
-            }
+                Log.w("IMAGESDownloader", "Error downloading image from " + url);
+            } finally {
+                Log.e("IMAGESFINALY", urlConnection + "");
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
 
+            }
+            return null;
         }
-        return null;
     }
 }

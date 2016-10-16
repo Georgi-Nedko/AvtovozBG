@@ -3,14 +3,8 @@ package com.example.xcomputers.avtovozbg.model;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.os.ParcelableCompat;
 
-import org.json.JSONArray;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Created by svetlio on 12.10.2016 г..
@@ -24,12 +18,14 @@ public class Car implements Parcelable {
     private int kilometers;
     private String color;
     private String description;
-    private int price;
-    //private ArrayList<Bitmap> images;
-    //private String imageUrls;
+
+    private String price;
+    private ArrayList<Bitmap> images;
+    private String imageUrls;
 
 
-    public Car(String model, String brand, int horsePower, int price, int yearOfManufacture, String color, int kilometers, String description){//, ArrayList<Bitmap> images, String imageUrls) {
+    public Car(String model, String brand, int horsePower,String price, int yearOfManufacture, String color, int kilometers, String description, ArrayList<Bitmap> images, String imageUrls) {
+
         this.model = model;
         this.brand = brand;
         this.price = price;
@@ -50,9 +46,10 @@ public class Car implements Parcelable {
         kilometers = in.readInt();
         color = in.readString();
         description = in.readString();
-        price = in.readInt();
-        //images = in.createTypedArrayList(Bitmap.CREATOR);
-        //imageUrls = in.readString();
+        price = in.readString();
+        images = in.createTypedArrayList(Bitmap.CREATOR);
+        imageUrls = in.readString();
+
     }
 
     public static final Creator<Car> CREATOR = new Creator<Car>() {
@@ -95,17 +92,17 @@ public class Car implements Parcelable {
         return description;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    //public ArrayList<Bitmap> getImages() {
-      //  return images;
-   // }
+    public ArrayList<Bitmap> getImages() {
+        return images;
+    }
 
-    //public String getImageUrls() {
-       // return this.imageUrls;
-   // }
+    public String getImageUrls() {
+        return this.imageUrls;
+   }
 
     @Override
     public int describeContents() {
@@ -121,8 +118,10 @@ public class Car implements Parcelable {
         dest.writeInt(kilometers);
         dest.writeString(color);
         dest.writeString(description);
-        dest.writeInt(price);
-        //dest.writeTypedList(images);
-       // dest.writeString(imageUrls);
+
+        dest.writeString(price);
+        dest.writeTypedList(images);
+        dest.writeString(imageUrls);
+
     }
 }

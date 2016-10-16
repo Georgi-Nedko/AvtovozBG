@@ -29,7 +29,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
 public class CarsActivity extends AppCompatActivity {
@@ -49,6 +48,7 @@ public class CarsActivity extends AppCompatActivity {
     private static String displayName;
     private static String eMail;
     private String token;
+    private String price;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +69,39 @@ public class CarsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         Log.e("TAG", regJson.toString());
-        new TokenRegistrationTask().execute("");
-        new NewCarsRequestTask().execute("http://31.13.253.92/getPostsNotification.php?device="+ token);
+
+        //new RegisterDeviceToken().execute("");
+       // new RequestAllNewInfo().execute("http://192.168.6.144:8012/getPostsNotification.php?device=" + token);
+        /*String json = getIntent().getStringExtra("json");
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject contacts = jsonObject.getJSONObject("contacts");
+            phoneNumber = contacts.getString("phone");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+       /* new ImageDownloader().execute(json);
+        showProgressDialog();*/
+        /*carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));
+        carList.add(new Car("Astra","Opel",101,18000,2000,"green metalic",222200,"it is an amazing car",new ArrayList<Bitmap>()));*/
+
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarsRecyclerViewAdapter(CarsActivity.this, carList);
         recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).color(Color.WHITE).build());
+        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).size(6).color(Color.BLACK).build());
         adapter.setOnResultClickListener(createClickListener());
 
     }
@@ -125,7 +151,7 @@ public class CarsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             try {
-                String address = "http://31.13.253.92/registerDevice.php";
+                String address = "http://192.168.6.144:8012/registerDevice.php?device=" +  token;
                 URL url = new URL(address);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
@@ -161,39 +187,44 @@ public class CarsActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String address = params[0];
-            StringBuilder response = new StringBuilder();
-            try {
-                URL url = new URL(address);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-                int status = connection.getResponseCode();
-                Log.e("TAG", status + "");
-                Scanner sc = new Scanner(connection.getInputStream());
-                while (sc.hasNextLine()) {
-                    response.append(sc.nextLine());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Log.e("TAG", "responce: " + response.toString());
-            return response.toString();
+//            String address = params[0];
+//            StringBuilder response = new StringBuilder();
+//            try {
+//                URL url = new URL(address);
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setRequestMethod("GET");
+//                connection.connect();
+//                int status = connection.getResponseCode();
+//                Log.e("TAG", status + "");
+//                Scanner sc = new Scanner(connection.getInputStream());
+//                while (sc.hasNextLine()) {
+//                    response.append(sc.nextLine());
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            Log.e("TAG", "responce: " + response.toString());
+            return "";
         }
 
         @Override
         protected void onPostExecute(String jsonResponce) {
             Log.e("TAG", jsonResponce);
+            String json = null;
             try {
-                JSONObject jsonObject = new JSONObject(jsonResponce);
+                json = getIntent().getStringExtra("json");
+                JSONObject jsonObject = new JSONObject(json);
                 JSONObject contacts = jsonObject.getJSONObject("contacts");
                 phoneNumber = contacts.getString("phone");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            new ImageDownloader().execute(jsonResponce);
-            //showProgressDialog();
+
+
+            new ImageDownloader().execute(json);
+            showProgressDialog();
+
         }
     }
 
@@ -213,10 +244,14 @@ public class CarsActivity extends AppCompatActivity {
                     km = post.getInt("km");
                     color = post.getString("color");
                     description = post.getString("description");
+                    price = post.getString("price");
                     JSONArray urls = post.getJSONArray("urls");
-                    String address = urls.getString(0);
+
+                    //String temp = "http://192.168.6.144:8012/";
+                    //temp+ urls
+                    String address =  urls.getString(0);
                     tepmoraryBitmapList = downloadBitmap(address);
-                    carList.add(new Car(model, brand, hp, 5000, productionYear, color, km, description));//, tepmoraryBitmapList, urls.toString()));
+                    carList.add(new Car(model,brand,hp, price, productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
