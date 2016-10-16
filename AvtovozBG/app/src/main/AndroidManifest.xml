@@ -65,7 +65,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".SeePhotosOnFullScreenActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

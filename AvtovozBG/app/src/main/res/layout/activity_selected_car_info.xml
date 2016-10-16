@@ -29,28 +29,24 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingTop="10dp"
-        android:layout_weight="0.7"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        android:weightSum="5"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+
 
         <ImageButton
             android:id="@+id/call_us"
             android:layout_width="0dp"
+            android:background="@drawable/call_us_black"
             android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:background="@drawable/button_shape"
-            android:src="@drawable/call_us"
             android:text="Call us"
             android:textAllCaps="false" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

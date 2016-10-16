@@ -19,7 +19,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,7 +29,6 @@ import com.example.xcomputers.avtovozbg.model.Car;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -76,7 +74,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 if(isConnectingToInternet()) {
                     Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
                     intent.putExtra("car", selectedCar.getImageUrls());
-                    intent.putExtra("carImage", selectedCar.getImages().get(0));
+                   // intent.putExtra("carImage", selectedCar.getImages().get(1));
                     startActivity(intent);
                 }
                 else{

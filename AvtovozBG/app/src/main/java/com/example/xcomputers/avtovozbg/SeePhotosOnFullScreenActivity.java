@@ -39,19 +39,19 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
-        firstImage = new ImageView(SeePhotosOnFullScreenActivity.this);
-        firstImage.setImageBitmap((Bitmap) getIntent().getParcelableExtra("carImage"));
-        hsvLL.addView(firstImage);
-        firstImage.requestLayout();
-        firstImage.getLayoutParams().height = (int) (height/1.1);
-        firstImage.getLayoutParams().width = width;
-        firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
+//        firstImage = new ImageView(SeePhotosOnFullScreenActivity.this);
+//        firstImage.setImageBitmap((Bitmap) getIntent().getParcelableExtra("carImage"));
+//        hsvLL.addView(firstImage);
+//        firstImage.requestLayout();
+//        firstImage.getLayoutParams().height = (int) (height/1.05);
+//        firstImage.getLayoutParams().width = width;
+//        firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
 
         try {
             JSONArray jsonArray = new JSONArray(getIntent().getStringExtra("car"));
 
-            for (int i = 1; i < jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 String temp = "http://avtovoz.hopto.org/";
                 String address = temp + jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
@@ -93,7 +93,7 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
                 hsvLL.addView(newImageView);
 
                 newImageView.requestLayout();
-                newImageView.getLayoutParams().height = (int) (height/1.1);
+                newImageView.getLayoutParams().height = (int) (height/1.05);
                 newImageView.getLayoutParams().width = width;
                 newImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -23,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.xcomputers.avtovozbg.model.Car;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
