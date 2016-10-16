@@ -232,7 +232,7 @@ public class CarsActivity extends AppCompatActivity {
                     km = post.getInt("km");
                     color = post.getString("color");
                     description = post.getString("description");
-                    price = (String) post.get("price");
+                    price = post.getString("price");
                     JSONArray urls = post.getJSONArray("urls");
 
                     String temp = "http://avtovoz.hopto.org/";
