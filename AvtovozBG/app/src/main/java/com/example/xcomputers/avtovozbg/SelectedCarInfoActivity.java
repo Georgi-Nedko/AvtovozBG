@@ -42,7 +42,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
     private int height;
     private int width;
     int counter = 0;
-    private ImageView firstImage;
+    ImageView firstImage;
 
 
     @Override
@@ -70,7 +70,6 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         selectedCar = getIntent().getParcelableExtra("selectedCar");
         modelAndBrand.setText(selectedCar.getModel() + "," + selectedCar.getBrand());
         horsePower.setText("Horse power: " + selectedCar.getHorsePower() + "HP");
@@ -87,23 +86,21 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
 
         String urls = selectedCar.getImageUrls();
 
-       /* firstImage = new ImageView(SelectedCarInfoActivity.this);
-        firstImage.setImageResource(R.drawable.login_background);
+        firstImage = new ImageView(SelectedCarInfoActivity.this);
+        firstImage.setImageResource(R.drawable.image_coming_soon);
         hsvLL.addView(firstImage);
         firstImage.requestLayout();
         firstImage.getLayoutParams().height = height / 3;
         firstImage.getLayoutParams().width = width;
         firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
-*/
+
 
         try {
             JSONArray jsonArray = new JSONArray(urls);
 
             for(int i = 0; i<jsonArray.length();i++){
-               // String temp = "http://192.168.6.144:8012/";
-                //temp +
-                String address =  jsonArray.getString(i);
-
+                String temp = "http://avtovoz.hopto.org/";
+                String address = temp + jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
             }
 
@@ -152,11 +149,10 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         protected void onPreExecute() {
             if(selectedCar.getImages().size() == 0){
                 ImageView img = new ImageView(SelectedCarInfoActivity.this);
-                img.setImageBitmap(selectedCar.getImages().get(0));
-                img.setScaleType(ImageView.ScaleType.FIT_XY);
+                img.setImageResource(R.drawable.image_coming_soon);
+                img.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 hsvLL.addView(img);
             }
-
         }
 
         @Override
@@ -168,6 +164,7 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 selectedCar.getImages().add(bitmap);
                 ImageView newImageView = new ImageView(SelectedCarInfoActivity.this);
                 newImageView.setImageBitmap(bitmap);
+                hsvLL.removeView(firstImage);
                 hsvLL.addView(newImageView);
 
                 newImageView.requestLayout();
