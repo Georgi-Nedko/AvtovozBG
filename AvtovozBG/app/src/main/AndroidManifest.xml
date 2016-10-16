@@ -21,7 +21,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,9 +59,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".CarsActivity"></activity>
-        <activity android:name=".SelectedCarInfoActivity" />
-        <activity android:name=".SeePhotosOnFullScreenActivity"></activity>
+        <activity android:name=".CarsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SelectedCarInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SeePhotosOnFullScreenActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
