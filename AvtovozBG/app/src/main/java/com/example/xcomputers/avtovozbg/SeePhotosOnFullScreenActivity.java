@@ -39,15 +39,6 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
         height = displaymetrics.heightPixels;
         width = displaymetrics.widthPixels;
 
-//        firstImage = new ImageView(SeePhotosOnFullScreenActivity.this);
-//        firstImage.setImageBitmap((Bitmap) getIntent().getParcelableExtra("carImage"));
-//        hsvLL.addView(firstImage);
-//        firstImage.requestLayout();
-//        firstImage.getLayoutParams().height = (int) (height/1.05);
-//        firstImage.getLayoutParams().width = width;
-//        firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
-
-
         try {
             JSONArray jsonArray = new JSONArray(getIntent().getStringExtra("car"));
 
@@ -56,13 +47,9 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
                 String address = temp + jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
             }
-
-            Log.e("URLSARRAY", jsonArray.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
@@ -70,7 +57,6 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            Log.e("IMAGESSVALQMSNIMKA", params[0]);
             counter++;
             return downloadBitmap(params[0]);
         }
@@ -89,32 +75,13 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
 
                 ImageView newImageView = new ImageView(SeePhotosOnFullScreenActivity.this);
                 newImageView.setImageBitmap(bitmap);
-                //hsvLL.removeView(firstImage);
                 hsvLL.addView(newImageView);
 
                 newImageView.requestLayout();
-                newImageView.getLayoutParams().height = (int) (height/1.05);
+                newImageView.getLayoutParams().height = (int) (height / 1.05);
                 newImageView.getLayoutParams().width = width;
                 newImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-
-                Log.e("IMAGESADD", bitmap.toString());
-                //Log.e("IMAGES1", selectedCar.getImages().size() + "");
-            } else {
-                // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
-
-
-                Log.e("IMAGESADD", bitmap.toString());
-                // Log.e("IMAGES1", selectedCar.getImages().size() + "");
-                //if (counter == 1) {
-                //  hsvLL.removeViewAt(0);
-
-                //  } else {
-                // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
-
-                // }
             }
-
-
         }
 
 
@@ -124,30 +91,22 @@ public class SeePhotosOnFullScreenActivity extends AppCompatActivity {
                 URL uri = new URL(url);
                 urlConnection = (HttpURLConnection) uri.openConnection();
                 int statusCode = urlConnection.getResponseCode();
-                Log.e("IMAGESTATUS", statusCode + "");
                 if (statusCode != 200) {
-                    Log.e("IMAGESTATUS!=200", statusCode + "");
                     return null;
                 }
                 InputStream inputStream = urlConnection.getInputStream();
                 if (inputStream != null) {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Log.e("IMAGESBITMAP", bitmap + "");
                     return bitmap;
                 }
             } catch (Exception e) {
                 urlConnection.disconnect();
-                Log.w("IMAGESDownloader", "Error downloading image from " + url);
             } finally {
-                Log.e("IMAGESFINALY", urlConnection + "");
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
-
             }
             return null;
         }
-
-
     }
 }

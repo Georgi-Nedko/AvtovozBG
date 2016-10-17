@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.xcomputers.avtovozbg.model.Car;
+import com.example.xcomputers.avtovozbg.model.WifiManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,10 +52,12 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
     private int counter = 0;
     private ImageView firstImage;
     private AlertDialog alertDialog;
+    private WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        wifiManager = WifiManager.getInstance(this);
         SelectedCarInfoActivity.this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_selected_car_info);
         modelAndBrand = (TextView) findViewById(R.id.model_and_brand);
@@ -71,22 +74,20 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         hsvLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isConnectingToInternet()) {
+                if (wifiManager.isConnectingToInternet()) {
                     Intent intent = new Intent(SelectedCarInfoActivity.this, SeePhotosOnFullScreenActivity.class);
                     intent.putExtra("car", selectedCar.getImageUrls());
-                   // intent.putExtra("carImage", selectedCar.getImages().get(1));
                     startActivity(intent);
-                }
-                else{
-                    promptUserToTurnOnWifi();
+                } else {
+                    alertDialog = wifiManager.promptUserToTurnOnWifi();
                 }
             }
         });
         selectedCar = getIntent().getParcelableExtra("selectedCar");
         modelAndBrand.setText(selectedCar.getBrand() + "  " + selectedCar.getModel());
-        horsePower.setText(selectedCar.getHorsePower()+"");
-        kilometers.setText(selectedCar.getKilometers()+"");
-        producedIn.setText(selectedCar.getYearOfManufacture()+"");
+        horsePower.setText(selectedCar.getHorsePower() + "");
+        kilometers.setText(selectedCar.getKilometers() + "");
+        producedIn.setText(selectedCar.getYearOfManufacture() + "");
         price.setText(selectedCar.getPrice());
         color.setText(selectedCar.getColor());
         description.setText(selectedCar.getDescription());
@@ -106,34 +107,16 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
         firstImage.getLayoutParams().width = width;
         firstImage.setScaleType(ImageView.ScaleType.FIT_XY);
 
-
         try {
             JSONArray jsonArray = new JSONArray(urls);
-
-            for(int i = 0; i<jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 String temp = "http://avtovoz.hopto.org/";
                 String address = temp + jsonArray.getString(i);
                 new ImageDownloaderTask().execute(address);
             }
-
-            Log.e("URLSARRAY", jsonArray.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
-
-       // Log.e("URLS", selectedCar.getImageUrls());
-
-
-        //TODO  da napylnq scrollviewto sys snimkite
-
-
-        /*ImageView img = new ImageView(SelectedCarInfoActivity.this);
-        img.setImageResource(R.drawable.login_background);
-        img.setScaleType(ImageView.ScaleType.FIT_XY);
-        hsv.addView(img);*/
-        //TODO clicklistener na call butona
         call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,9 +125,6 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 startActivity(callIntent);
             }
         });
-
-
-//
     }
 
     class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
@@ -152,14 +132,13 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            Log.e("IMAGESSVALQMSNIMKA", params[0]);
             counter++;
             return downloadBitmap(params[0]);
         }
 
         @Override
         protected void onPreExecute() {
-            if(selectedCar.getImages().size() == 0){
+            if (selectedCar.getImages().size() == 0) {
                 ImageView img = new ImageView(SelectedCarInfoActivity.this);
                 img.setImageResource(R.drawable.image_coming_soon);
                 img.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -184,24 +163,11 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 newImageView.getLayoutParams().width = width;
                 newImageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
-                Log.e("IMAGESADD", bitmap.toString());
-                //Log.e("IMAGES1", selectedCar.getImages().size() + "");
             } else {
-                // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
-
-
-                Log.e("IMAGESADD", bitmap.toString());
-                Log.e("IMAGES1", selectedCar.getImages().size() + "");
                 if (counter == 1) {
                     hsvLL.removeViewAt(0);
-
-                } else {
-                    // Toast.makeText(SelectedPlaceActivity.this, "NO PHOTOS", Toast.LENGTH_SHORT).show();
-
                 }
             }
-
-
         }
 
 
@@ -211,72 +177,22 @@ public class SelectedCarInfoActivity extends AppCompatActivity {
                 URL uri = new URL(url);
                 urlConnection = (HttpURLConnection) uri.openConnection();
                 int statusCode = urlConnection.getResponseCode();
-                Log.e("IMAGESTATUS", statusCode + "");
                 if (statusCode != 200) {
-                    Log.e("IMAGESTATUS!=200", statusCode + "");
                     return null;
                 }
                 InputStream inputStream = urlConnection.getInputStream();
                 if (inputStream != null) {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    Log.e("IMAGESBITMAP", bitmap + "");
                     return bitmap;
                 }
             } catch (Exception e) {
                 urlConnection.disconnect();
-                Log.w("IMAGESDownloader", "Error downloading image from " + url);
             } finally {
-                Log.e("IMAGESFINALY", urlConnection + "");
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
-
             }
             return null;
         }
-    }
-    private void promptUserToTurnOnWifi() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (!isConnectingToInternet()) {
-            builder.setTitle("Internet Services Not Active");
-            builder.setMessage("Please enable Internet Services");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Show location settings when the user acknowledges the alert dialog
-                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.show();
-        }
-    }
-
-    private boolean isConnectingToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) SelectedCarInfoActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Network[] networks = connectivityManager.getAllNetworks();
-            NetworkInfo networkInfo;
-            for (Network mNetwork : networks) {
-                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
-                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                    return true;
-                }
-            }
-        } else {
-            if (connectivityManager != null) {
-                //noinspection deprecation
-                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
-                if (info != null) {
-                    for (NetworkInfo anInfo : info) {
-                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

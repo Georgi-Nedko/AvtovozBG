@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.xcomputers.avtovozbg.model.Car;
+import com.example.xcomputers.avtovozbg.model.WifiManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +58,7 @@ public class CarsActivity extends AppCompatActivity {
     private String token;
     private String price;
     private AlertDialog alertDialog;
-
+    private WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class CarsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cars);
         recyclerView = (RecyclerView) findViewById(R.id.cars_recycler);
         carList = new ArrayList<>();
-
+        wifiManager = WifiManager.getInstance(this);
         displayName = getIntent().getStringExtra("displayName");
         eMail = getIntent().getStringExtra("eMail");
         token = getIntent().getStringExtra("token");
@@ -79,31 +80,28 @@ public class CarsActivity extends AppCompatActivity {
         }
         Log.e("TAG", regJson.toString());
 
-        new TokenRegistrationTask().execute("http://avtovoz.hopto.org/registerDevice.php?device=" +  token);
+        new TokenRegistrationTask().execute("http://avtovoz.hopto.org/registerDevice.php?device=" + token);
         new NewCarsRequestTask().execute("http://avtovoz.hopto.org/getPostsNotification.php?device=" + token);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarsRecyclerViewAdapter(CarsActivity.this, carList);
         recyclerView.setAdapter(adapter);
-        //recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this).size(6).color(Color.BLACK).build());
         adapter.setOnResultClickListener(createClickListener());
-
     }
 
     protected CarsRecyclerViewAdapter.onResultClickListener createClickListener() {
         return new CarsRecyclerViewAdapter.onResultClickListener() {
             @Override
             public void onResultClicked(View view, int position) {
-                if(isConnectingToInternet()) {
+                if (wifiManager.isConnectingToInternet()) {
                     Car selectedCar = carList.get(position);
                     Intent intent = new Intent(CarsActivity.this, SelectedCarInfoActivity.class);
                     intent.putExtra("selectedCar", selectedCar);
                     intent.putExtra("phoneNumber", phoneNumber);
                     startActivity(intent);
-                }
-                else{
-                    promptUserToTurnOnWifi();
+                } else {
+                    alertDialog = wifiManager.promptUserToTurnOnWifi();
                 }
             }
         };
@@ -182,22 +180,18 @@ public class CarsActivity extends AppCompatActivity {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.connect();
-                int status = connection.getResponseCode();
-                Log.e("TAG", status + "");
                 Scanner sc = new Scanner(connection.getInputStream());
                 while (sc.hasNextLine()) {
                     response.append(sc.nextLine());
                 }
             } catch (IOException e) {
-               e.printStackTrace();
-          }
-            Log.e("TAG", "responce: " + response.toString());
+                e.printStackTrace();
+            }
             return response.toString();
         }
 
         @Override
         protected void onPostExecute(String jsonResponce) {
-            Log.e("TAG", jsonResponce);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponce);
                 JSONObject contacts = jsonObject.getJSONObject("contacts");
@@ -205,12 +199,8 @@ public class CarsActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
-
             new ImageDownloader().execute(jsonResponce);
             showProgressDialog();
-
         }
     }
 
@@ -236,7 +226,7 @@ public class CarsActivity extends AppCompatActivity {
                     String temp = "http://avtovoz.hopto.org/";
                     String address = temp + urls.getString(0);
                     tepmoraryBitmapList = downloadBitmap(address);
-                    carList.add(new Car(model,brand,hp, price, productionYear,color, km, description, tepmoraryBitmapList, urls.toString()));
+                    carList.add(new Car(model, brand, hp, price, productionYear, color, km, description, tepmoraryBitmapList, urls.toString()));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -254,9 +244,7 @@ public class CarsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Bitmap> bitmap) {
-
             tepmoraryBitmapList = new ArrayList<Bitmap>();
-
         }
     }
 
@@ -267,22 +255,18 @@ public class CarsActivity extends AppCompatActivity {
             URL url = new URL(address);
             urlConnection = (HttpURLConnection) url.openConnection();
             int statusCode = urlConnection.getResponseCode();
-            Log.e("IMAGESTATUS", statusCode + "");
             if (statusCode != 200) {
-                Log.e("IMAGESTATUS!=200", statusCode + "");
                 return null;
             }
             InputStream inputStream = urlConnection.getInputStream();
             if (inputStream != null) {
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 Bitmap resizedBitmap = getResizedBitmap(bitmap, 200, 200);
-                Log.e("IMAGESBITMAP", bitmap + "");
                 map.add(resizedBitmap);
             }
         } catch (Exception e) {
 
         } finally {
-            Log.e("IMAGESFINALY", urlConnection + "");
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -308,48 +292,4 @@ public class CarsActivity extends AppCompatActivity {
         return resizedBitmap;
     }
 
-    private void promptUserToTurnOnWifi() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (!isConnectingToInternet()) {
-            builder.setTitle("Internet Services Not Active");
-            builder.setMessage("Please enable Internet Services");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Show location settings when the user acknowledges the alert dialog
-                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.show();
-        }
-    }
-
-    private boolean isConnectingToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) CarsActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Network[] networks = connectivityManager.getAllNetworks();
-            NetworkInfo networkInfo;
-            for (Network mNetwork : networks) {
-                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
-                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                    return true;
-                }
-            }
-        } else {
-            if (connectivityManager != null) {
-                //noinspection deprecation
-                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
-                if (info != null) {
-                    for (NetworkInfo anInfo : info) {
-                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

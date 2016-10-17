@@ -18,15 +18,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
-
-        String json = remoteMessage.getData().get("message");
-        Log.e("TAG", json);
-        for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            Log.d("TAG", "key, " + key + " value " + value);
-        }
         showNotification(remoteMessage.getData().get("message"));
     }
 

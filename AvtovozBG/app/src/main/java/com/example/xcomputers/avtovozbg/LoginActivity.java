@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.xcomputers.avtovozbg.model.WifiManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -30,8 +31,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
-
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks{
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
 
 
     private static final int RC_SIGN_IN = 9001;
@@ -45,30 +45,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private static String eMail;
     private String token;
     private AlertDialog alertDialog;
+    private WifiManager wifiManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        wifiManager = WifiManager.getInstance(this);
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
         token = FirebaseInstanceId.getInstance().getToken();
-        //Log.e("TAG", token);
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Capture_it.ttf");
         appNameTV = (TextView) findViewById(R.id.appNameTV);
         appNameTV.setTypeface(custom_font);
-
-
-        json = "{\"contacts\":{\"name\":\"Красимир Стоев\",\"phone\":\"0888552211\"},\"" +
-                "posts\":[" +
-                "{\"brand\":\"Opel\",\"model\":\"Astra\",\"hp\":90,\"year\":2000,\"km\":143000,\"color\":\"silver\",\"description\":\"В добро състояние, с 4 зимни гуми\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/0/04/Opel_Astra_G_front_20081128.jpg\",\"http://images.forum-auto.com/mesimages/417472/astra%20(3).jpg\",\"https://upload.wikimedia.org/wikipedia/commons/5/59/Vauxhall.astra.bristol.750pix.jpg\",\"http://www.tuning.bg/public/upload/gallery/extended/normal/Opel_Astra_G_24asti_1.png\",\"https://www.namcars.net/image/2006-Opel-Astra-1.9-GTC-25627-8698828_2.jpg\",\"http://www.picautos.com/images/opel-astra-gtc-2.0-turbo-cosmo-04.jpg\",\"http://www.motorstown.com/images/opel-astra-2.2-dti-06.jpg\"]}," +
-                "{\"brand\":\"Ford\",\"model\":\"Fiesta\",\"hp\":60,\"year\":1996,\"km\":135000,\"color\":\"black\",\"description\":\"Удряна 4 пъти, не може да завива, най-добре за части\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/9/9d/Ford_Fiesta_MK3_rear_20070926.jpg\",\"http://www.powerful-cars.com/images/ford-d/1989-fiesta-4door-hatchback-11.jpg\",\"http://s1.cdn.autoevolution.com/images/gallery/FORDFiesta3Doors-2776_4.jpg\",\"http://www.fordfan.de/fordcars/carpic/75/image/1996fiesta.jpg\",\"http://images.forum-auto.com/mesimages/229428/Rouge.jpg\"]}," +
-                "{\"brand\":\"Opel\",\"model\":\"Astra\",\"hp\":90,\"year\":2000,\"km\":143000,\"color\":\"silver\",\"description\":\"В добро състояние, с 4 зимни гуми\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/0/04/Opel_Astra_G_front_20081128.jpg\",\"http://images.forum-auto.com/mesimages/417472/astra%20(3).jpg\",\"https://upload.wikimedia.org/wikipedia/commons/5/59/Vauxhall.astra.bristol.750pix.jpg\",\"http://www.tuning.bg/public/upload/gallery/extended/normal/Opel_Astra_G_24asti_1.png\",\"https://www.namcars.net/image/2006-Opel-Astra-1.9-GTC-25627-8698828_2.jpg\",\"http://www.picautos.com/images/opel-astra-gtc-2.0-turbo-cosmo-04.jpg\",\"http://www.motorstown.com/images/opel-astra-2.2-dti-06.jpg\"]}," +
-                "{\"brand\":\"Ford\",\"model\":\"Fiesta\",\"hp\":60,\"year\":1996,\"km\":135000,\"color\":\"black\",\"description\":\"Удряна 4 пъти, не може да завива, най-добре за части\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/9/9d/Ford_Fiesta_MK3_rear_20070926.jpg\",\"http://www.powerful-cars.com/images/ford-d/1989-fiesta-4door-hatchback-11.jpg\",\"http://s1.cdn.autoevolution.com/images/gallery/FORDFiesta3Doors-2776_4.jpg\",\"http://www.fordfan.de/fordcars/carpic/75/image/1996fiesta.jpg\",\"http://images.forum-auto.com/mesimages/229428/Rouge.jpg\"]}," +
-                "{\"brand\":\"Opel\",\"model\":\"Astra\",\"hp\":90,\"year\":2000,\"km\":143000,\"color\":\"silver\",\"description\":\"В добро състояние, с 4 зимни гуми\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/0/04/Opel_Astra_G_front_20081128.jpg\",\"http://images.forum-auto.com/mesimages/417472/astra%20(3).jpg\",\"https://upload.wikimedia.org/wikipedia/commons/5/59/Vauxhall.astra.bristol.750pix.jpg\",\"http://www.tuning.bg/public/upload/gallery/extended/normal/Opel_Astra_G_24asti_1.png\",\"https://www.namcars.net/image/2006-Opel-Astra-1.9-GTC-25627-8698828_2.jpg\",\"http://www.picautos.com/images/opel-astra-gtc-2.0-turbo-cosmo-04.jpg\",\"http://www.motorstown.com/images/opel-astra-2.2-dti-06.jpg\"]}," +
-                "{\"brand\":\"Ford\",\"model\":\"Fiesta\",\"hp\":60,\"year\":1996,\"km\":135000,\"color\":\"black\",\"description\":\"Удряна 4 пъти, не може да завива, най-добре за части\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/9/9d/Ford_Fiesta_MK3_rear_20070926.jpg\",\"http://www.powerful-cars.com/images/ford-d/1989-fiesta-4door-hatchback-11.jpg\",\"http://s1.cdn.autoevolution.com/images/gallery/FORDFiesta3Doors-2776_4.jpg\",\"http://www.fordfan.de/fordcars/carpic/75/image/1996fiesta.jpg\",\"http://images.forum-auto.com/mesimages/229428/Rouge.jpg\"]}," +
-                "{\"brand\":\"Opel\",\"model\":\"Astra\",\"hp\":90,\"year\":2000,\"km\":143000,\"color\":\"silver\",\"description\":\"В добро състояние, с 4 зимни гуми\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/0/04/Opel_Astra_G_front_20081128.jpg\",\"http://images.forum-auto.com/mesimages/417472/astra%20(3).jpg\",\"https://upload.wikimedia.org/wikipedia/commons/5/59/Vauxhall.astra.bristol.750pix.jpg\",\"http://www.tuning.bg/public/upload/gallery/extended/normal/Opel_Astra_G_24asti_1.png\",\"https://www.namcars.net/image/2006-Opel-Astra-1.9-GTC-25627-8698828_2.jpg\",\"http://www.picautos.com/images/opel-astra-gtc-2.0-turbo-cosmo-04.jpg\",\"http://www.motorstown.com/images/opel-astra-2.2-dti-06.jpg\"]}," +
-                "{\"brand\":\"Ford\",\"model\":\"Fiesta\",\"hp\":60,\"year\":1996,\"km\":135000,\"color\":\"black\",\"description\":\"Удряна 4 пъти, не може да завива, най-добре за части\",\"urls\":[\"https://upload.wikimedia.org/wikipedia/commons/9/9d/Ford_Fiesta_MK3_rear_20070926.jpg\",\"http://www.powerful-cars.com/images/ford-d/1989-fiesta-4door-hatchback-11.jpg\",\"http://s1.cdn.autoevolution.com/images/gallery/FORDFiesta3Doors-2776_4.jpg\",\"http://www.fordfan.de/fordcars/carpic/75/image/1996fiesta.jpg\",\"http://images.forum-auto.com/mesimages/229428/Rouge.jpg\"]}]}";
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -89,10 +78,10 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isConnectingToInternet())
+                if (wifiManager.isConnectingToInternet())
                     signIn();
                 else
-                    promptUserToTurnOnWifi();
+                    alertDialog = wifiManager.promptUserToTurnOnWifi();
             }
         });
     }
@@ -140,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     @Override
     public void onStart() {
-        promptUserToTurnOnWifi();
+        alertDialog = wifiManager.promptUserToTurnOnWifi();
         mGoogleApiClient.connect();
        /* showProgressDialog();
 
@@ -211,50 +200,4 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onConnectionSuspended(int i) {
 
     }
-
-    private void promptUserToTurnOnWifi() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        if (!isConnectingToInternet()) {
-            builder.setTitle("Internet Services Not Active");
-            builder.setMessage("Please enable Internet Services");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Show location settings when the user acknowledges the alert dialog
-                    Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.show();
-        }
-    }
-
-    private boolean isConnectingToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) LoginActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Network[] networks = connectivityManager.getAllNetworks();
-            NetworkInfo networkInfo;
-            for (Network mNetwork : networks) {
-                networkInfo = connectivityManager.getNetworkInfo(mNetwork);
-                if (networkInfo.getState().equals(NetworkInfo.State.CONNECTED)) {
-                    return true;
-                }
-            }
-        } else {
-            if (connectivityManager != null) {
-                //noinspection deprecation
-                NetworkInfo[] info = connectivityManager.getAllNetworkInfo();
-                if (info != null) {
-                    for (NetworkInfo anInfo : info) {
-                        if (anInfo.getState() == NetworkInfo.State.CONNECTED) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
 }
