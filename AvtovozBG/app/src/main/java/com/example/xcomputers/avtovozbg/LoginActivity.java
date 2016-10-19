@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_login);
         wifiManager = WifiManager.getInstance(this);
         FirebaseMessaging.getInstance().subscribeToTopic("myTestTopic");
-        token = FirebaseInstanceId.getInstance().getToken();
+
 
         Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Capture_it.ttf");
         appNameTV = (TextView) findViewById(R.id.appNameTV);
@@ -190,6 +190,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Intent intent = new Intent(LoginActivity.this, CarsActivity.class);
         intent.putExtra("displayName", displayName);
         intent.putExtra("eMail", eMail);
+        token = FirebaseInstanceId.getInstance().getToken();
         intent.putExtra("token", token);
         startActivity(intent);
         hideProgressDialog();

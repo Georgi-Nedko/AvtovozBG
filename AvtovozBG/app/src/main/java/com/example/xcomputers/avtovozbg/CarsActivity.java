@@ -70,6 +70,8 @@ public class CarsActivity extends AppCompatActivity {
         displayName = getIntent().getStringExtra("displayName");
         eMail = getIntent().getStringExtra("eMail");
         token = getIntent().getStringExtra("token");
+        Log.e("TOKEN" , token);
+
         JSONObject regJson = new JSONObject();
         try {
             regJson.put("device", token);
@@ -78,9 +80,9 @@ public class CarsActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e("TAG", regJson.toString());
+        Log.e("CAR REQUEST", regJson.toString());
 
-        new TokenRegistrationTask().execute("http://avtovoz.hopto.org/registerDevice.php?device=" + token);
+        new TokenRegistrationTask().execute("http://avtovoz.hopto.org/registerDevice.php");
         new NewCarsRequestTask().execute("http://avtovoz.hopto.org/getPostsNotification.php?device=" + token);
 
 
@@ -157,9 +159,9 @@ public class CarsActivity extends AppCompatActivity {
                         sb.append(line + "\n");
                     }
                     br.close();
-                    System.out.println("" + sb.toString());
+                    System.out.println("HTTP_OK_TAG" + sb.toString());
                 } else {
-                    System.out.println(connection.getResponseMessage());
+                    System.out.println("HTTP_FAIL_TAG" + connection.getResponseMessage());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

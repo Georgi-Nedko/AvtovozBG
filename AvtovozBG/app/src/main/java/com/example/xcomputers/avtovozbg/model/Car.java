@@ -18,7 +18,6 @@ public class Car implements Parcelable {
     private int kilometers;
     private String color;
     private String description;
-
     private String price;
     private ArrayList<Bitmap> images;
     private String imageUrls;
